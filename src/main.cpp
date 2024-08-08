@@ -209,14 +209,14 @@ void loop() {
                                 Serial1.readBytes(buffer2 + len_message, len_message_additional);
                                 uint16_t full_len = len_message + len_message_additional;
                                 
-                                uint16_t crc = _uart.crc16(buffer2, len_message-2);
-                                Serial.println((buffer2[len_message-2] << 8 | buffer2[len_message-1]));
+                                uint16_t crc = _uart.crc16(buffer2, full_len-2);
+                                Serial.println((buffer2[full_len-2] << 8 | buffer2[full_len-1]));
 
-                                if (crc == (buffer2[len_message-2] << 8 | buffer2[len_message-1])) {
+                                if (crc == (buffer2[full_len-2] << 8 | buffer2[full_len-1])) {
                                     Serial.println("Успешно дочитано!");
                                     Serial.println("CRC OK");
                                     _buff[4] = buffer2[4];
-                                    for (int i = 0; i < len_message; i++) {
+                                    for (int i = 0; i < full_len; i++) {
                                         char hexString[3]; // Будет использоваться для хранения-строки
                                         sprintf(hexString, "%02X", buffer2[i]); // Преобразование байта в HEX-строку
                                         client.print(hexString);
