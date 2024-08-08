@@ -191,7 +191,9 @@ void loop() {
                                     Serial.println("CRC OK");
                                     _buff[4] = buffer2[4];
                                     for (int i = 0; i < len_message; i++) {
-                                        client.print(buffer2[i], HEX);
+                                        char hexString[3]; // Будет использоваться для хранения-строки
+                                        sprintf(hexString, "%02X", buffer2[i]); // Преобразование байта в HEX-строку
+                                        client.print(hexString);
                                     }
                                     client.println();
                                     
@@ -215,7 +217,9 @@ void loop() {
                                     Serial.println("CRC OK");
                                     _buff[4] = buffer2[4];
                                     for (int i = 0; i < len_message; i++) {
-                                        client.print(buffer2[i], HEX);
+                                        char hexString[3]; // Будет использоваться для хранения-строки
+                                        sprintf(hexString, "%02X", buffer2[i]); // Преобразование байта в HEX-строку
+                                        client.print(hexString);
                                     }
                                     client.println();
                                 }
