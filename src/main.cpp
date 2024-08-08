@@ -180,7 +180,7 @@ void loop() {
                             if (client.available()) {
                                 Serial1.write(_buff, sizeof(_buff));
                                 while (!Serial1.available()) {};
-                                delay(50);
+                                
                                 uint16_t len_message = Serial1.available();
                                 Serial1.readBytes(buffer2, len_message);
                                 
@@ -195,10 +195,36 @@ void loop() {
                                     }
                                     client.println();
                                     
-                            }
                             } else {
-                                counter = 0xFF;
+
+                                Serial.println("CRC error");
+                                Serial.println("Попытка дочитать");
+
+                                while (!Serial1.available()) {}
+                                Serial.println("Есть данные в буффере");
+                                
+                                uint16_t len_message_additional = Serial1.available();
+                                Serial1.readBytes(buffer2 + len_message, len_message_additional);
+                                uint16_t full_len = len_message + len_message_additional;
+                                
+                                uint16_t crc = _uart.crc16(buffer2, len_message-2);
+                                Serial.println((buffer2[len_message-2] << 8 | buffer2[len_message-1]));
+
+                                if (crc == (buffer2[len_message-2] << 8 | buffer2[len_message-1])) {
+                                    Serial.println("Успешно дочитано!");
+                                    Serial.println("CRC OK");
+                                    _buff[4] = buffer2[4];
+                                    for (int i = 0; i < len_message; i++) {
+                                        client.print(buffer2[i], HEX);
+                                    }
+                                    client.println();
+                                }
+
+
                             }
+                        } else {
+                            counter = 0xFF;
+                        }
                             
                         }
                         client.flush();
